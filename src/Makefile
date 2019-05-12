@@ -1,10 +1,11 @@
 
 objects := $(patsubst %.c,%.o,$(wildcard *.c))
-foo : $(objects)
-	cc -o foo $(objects)
+$(FINAL_TARGET) : $(objects)
+	cc -o $(FINAL_TARGET) $(objects)
 
+main.o: include/base64.h include/str_reverse.h include/strcat_imp.h
 .PHONY: clean
 
 clean:
-	rm -rf *.o foo
+	rm -rf *.o $(FINAL_TARGET)
 
