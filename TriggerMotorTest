@@ -1,0 +1,43 @@
+
+manual_reverse_arr=("audioQTest" "videoQTest" "lightQTest" "ircutQTest" "irledQTest" "gpioQTest")
+echo "TT"
+#for ((i=0; i < ${#arr[@]}; i++))
+#do
+    ### 印出 array 的 key 及 value
+#    echo $i ${arr[$i]}
+#done
+#if 0
+
+if [ -f /tmp/detectfile ]; then
+	if [ "$AUDIO_ENABLE" == 1 ] && [ -f /tmp/qt-report/videoQTest ]; then 
+		rm /tmp/detectfile
+	elif [ "$VIDEO_ENABLE" == 1 ] && [ -f /tmp/qt-report/lightQTest ]; then
+                rm /tmp/detectfile
+	elif [ "$LIGHT_SENSOR_ENABLE" == 1 ] && [ -f /tmp/qt-report/ircutQTest ]; then
+		rm /tmp/detectfile
+	elif [ "$IRCUT_ENABLE" == 1 ] && [ -f /tmp/qt-report/irledQTest ]; then
+		rm /tmp/detectfile
+	elif [ "$IRLEDPWM_ENABLE" == 1 ] && [ -f /tmp/qt-report/gpioQTest ]; then
+		rm /tmp/detectfile
+	elif [ -f /tmp/qt-report/ramQTest ]; then
+		rm /tmp/detectfile
+		#for i in $(seq 0 19)
+		#do
+		#	if [ $GPIO_${i}_ENABLE == 1 ]; then
+		#		rm /tmp/detectfile
+		#	fi
+		#done
+	else
+		echo "manaul test done"
+	fi
+else
+	if [ "$ZOOM_ENABLE" == 1 ] || [ "$FOCUS_ENABLE" == 1 ]; then
+		touch /tmp/detectfile
+		cd /vvtk_qt
+		source motorQTest
+	else
+		exit 0
+	fi
+fi
+
+#endif
