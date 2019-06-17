@@ -1,12 +1,31 @@
 
 manual_reverse_arr=("audioQTest" "videoQTest" "lightQTest" "ircutQTest" "irledQTest" "gpioQTest")
-echo "TT"
 #for ((i=0; i < ${#arr[@]}; i++))
 #do
     ### 印出 array 的 key 及 value
 #    echo $i ${arr[$i]}
 #done
 #if 0
+manual_sum=0
+if [ "$AUDIO_ENABLE" == 1 ] ; then
+	manual_sum=$(( $manual_sum + 32 ))
+fi
+if [ "$VIDEO_ENABLE" == 1 ] ; then
+        manual_sum=$(( $manual_sum + 16 ))
+fi
+if [ "$LIGHT_SENSOR_ENABLE" == 1 ] ; then
+        manual_sum=$(( $manual_sum + 8 ))
+fi
+if [ "$IRCUT_ENABLE" == 1 ] ; then
+        manual_sum=$(( $manual_sum + 4 ))
+fi
+if [ "$IRLEDPWM_ENABLE" == 1 ] ; then
+        manual_sum=$(( $manual_sum + 2 ))
+fi
+if [ "$GPIO_0_ENABLE" == 1 ] ; then
+        manual_sum=$(( $manual_sum + 1 ))
+fi
+echo "manual_sum=$manual_sum"
 
 if [ -f /tmp/detectfile ]; then
 	if [ "$AUDIO_ENABLE" == 1 ] && [ -f /tmp/qt-report/videoQTest ]; then 
