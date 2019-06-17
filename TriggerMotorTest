@@ -1,11 +1,11 @@
 
-manual_reverse_arr=("audioQTest" "videoQTest" "lightQTest" "ircutQTest" "irledQTest" "gpioQTest")
+#manual_reverse_arr=("audioQTest" "videoQTest" "lightQTest" "ircutQTest" "irledQTest" "gpioQTest")
 #for ((i=0; i < ${#arr[@]}; i++))
 #do
     ### 印出 array 的 key 及 value
 #    echo $i ${arr[$i]}
 #done
-#if 0
+
 manual_sum=0
 if [ "$AUDIO_ENABLE" == 1 ] ; then
 	manual_sum=$(( $manual_sum + 32 ))
@@ -27,28 +27,107 @@ if [ "$GPIO_0_ENABLE" == 1 ] ; then
 fi
 echo "manual_sum=$manual_sum"
 
+
+traget_file = /tmp/qt-report/ramQTest
+if [ "$AUDIO_ENABLE" == 1 ] ; then
+	if [ "$VIDEO_ENABLE" == 1 ] ; then
+		traget_file = /tmp/qt-report/videoQTest
+	elif [ "$LIGHT_SENSOR_ENABLE" == 1 ] ;then
+		traget_file = /tmp/qt-report/lightQTest
+	elif [ "$IRCUT_ENABLE" == 1 ] ; then
+		traget_file = /tmp/qt-report/ircutQTest
+	elif [ "$IRLEDPWM_ENABLE" == 1 ] ; then
+		traget_file = /tmp/qt-report/irledQTest
+	else
+		for i in $(seq 0 19)
+		do
+			eval gpio_enable="\$GPIO_${i}_ENABLE"
+			if [ "$gpio_enable" == 1 ]; then
+				traget_file = /tmp/qt-report/gpioQTest
+			fi
+		done
+	fi
+elif [ "$VIDEO_ENABLE" == 1 ] ; then
+	if [ "$LIGHT_SENSOR_ENABLE" == 1 ] ;then
+                traget_file = /tmp/qt-report/lightQTest
+        elif [ "$IRCUT_ENABLE" == 1 ] ; then
+                traget_file = /tmp/qt-report/ircutQTest
+        elif [ "$IRLEDPWM_ENABLE" == 1 ] ; then
+                traget_file = /tmp/qt-report/irledQTest
+        else
+                for i in $(seq 0 19)
+                do
+                        eval gpio_enable="\$GPIO_${i}_ENABLE"
+                        if [ "$gpio_enable" == 1 ]; then
+                                traget_file = /tmp/qt-report/gpioQTest
+                        fi
+                done
+	fi
+elif [ "$LIGHT_SENSOR_ENABLE" == 1 ] ; then
+	if [ "$IRCUT_ENABLE" == 1 ] ; then
+                traget_file = /tmp/qt-report/ircutQTest
+        elif [ "$IRLEDPWM_ENABLE" == 1 ] ; then
+                traget_file = /tmp/qt-report/irledQTest
+        else
+                for i in $(seq 0 19)
+                do
+                        eval gpio_enable="\$GPIO_${i}_ENABLE"
+                        if [ "$gpio_enable" == 1 ]; then
+                                traget_file = /tmp/qt-report/gpioQTest
+                        fi
+                done
+	fi
+elif [ "$IRCUT_ENABLE" == 1 ] ; then
+	if [ "$IRLEDPWM_ENABLE" == 1 ] ; then
+                traget_file = /tmp/qt-report/irledQTest
+        else
+                for i in $(seq 0 19)
+                do
+                        eval gpio_enable="\$GPIO_${i}_ENABLE"
+                        if [ "$gpio_enable" == 1 ]; then
+                                traget_file = /tmp/qt-report/gpioQTest
+                        fi
+                done
+	fi
+elif [ "$IRLEDPWM_ENABLE" == 1 ] ; then
+	for i in $(seq 0 19)
+	do
+		eval gpio_enable="\$GPIO_${i}_ENABLE"
+		if [ "$gpio_enable" == 1 ]; then
+			traget_file = /tmp/qt-report/gpioQTest
+		fi
+	done	
+else
+	traget_file = /tmp/qt-report/ramQTest
+fi
+
+echo "target_file = ${target_file}"
+
 if [ -f /tmp/detectfile ]; then
-	if [ "$AUDIO_ENABLE" == 1 ] && [ -f /tmp/qt-report/videoQTest ]; then 
+	if [ -f ${target_file} ] ;then
 		rm /tmp/detectfile
-	elif [ "$VIDEO_ENABLE" == 1 ] && [ -f /tmp/qt-report/lightQTest ]; then
-                rm /tmp/detectfile
-	elif [ "$LIGHT_SENSOR_ENABLE" == 1 ] && [ -f /tmp/qt-report/ircutQTest ]; then
-		rm /tmp/detectfile
-	elif [ "$IRCUT_ENABLE" == 1 ] && [ -f /tmp/qt-report/irledQTest ]; then
-		rm /tmp/detectfile
-	elif [ "$IRLEDPWM_ENABLE" == 1 ] && [ -f /tmp/qt-report/gpioQTest ]; then
-		rm /tmp/detectfile
-	elif [ -f /tmp/qt-report/ramQTest ]; then
-		rm /tmp/detectfile
+	fi
+	#if [ "$AUDIO_ENABLE" == 1 ] && [ -f /tmp/qt-report/videoQTest ]; then 
+	#	rm /tmp/detectfile
+	#elif [ "$VIDEO_ENABLE" == 1 ] && [ -f /tmp/qt-report/lightQTest ]; then
+        #        rm /tmp/detectfile
+	#elif [ "$LIGHT_SENSOR_ENABLE" == 1 ] && [ -f /tmp/qt-report/ircutQTest ]; then
+	#	rm /tmp/detectfile
+	#elif [ "$IRCUT_ENABLE" == 1 ] && [ -f /tmp/qt-report/irledQTest ]; then
+	#	rm /tmp/detectfile
+	#elif [ "$IRLEDPWM_ENABLE" == 1 ] && [ -f /tmp/qt-report/gpioQTest ]; then
+	#	rm /tmp/detectfile
+	#elif [ -f /tmp/qt-report/ramQTest ]; then
+	#	rm /tmp/detectfile
 		#for i in $(seq 0 19)
 		#do
 		#	if [ $GPIO_${i}_ENABLE == 1 ]; then
 		#		rm /tmp/detectfile
 		#	fi
 		#done
-	else
-		echo "manaul test done"
-	fi
+	#else
+	#	echo "manaul test done"
+	#fi
 else
 	if [ "$ZOOM_ENABLE" == 1 ] || [ "$FOCUS_ENABLE" == 1 ]; then
 		touch /tmp/detectfile
@@ -59,4 +138,3 @@ else
 	fi
 fi
 
-#endif
